@@ -1,0 +1,48 @@
+<TrainingtimerWidget>:
+    orientation: "vertical"
+    Label:
+        id: timer_display
+        font_size: 50
+        text: "{:02d}:{:02d}".format(int(root.counter / 60), int(root.counter % 60))
+    
+    BoxLayout:
+        size_hint_y: 0.2
+        spacing: 10
+        Button:
+            text: "Start"
+            on_release: root.on_start()
+        Button:
+            text: "Stop"
+            on_release: root.on_stop()
+        Button:
+            text: "Set"
+            on_release: root.counter = 0
+        Button:
+            text: "O"
+            on_release: root.set_timer()
+
+<SetTimerWidget>:
+    title: "Set the time"
+    size_hint: 0.8, 0.8
+    id: settimer
+
+    BoxLayout
+        orientation: "vertical"
+        spacing: 20
+        TextInput:
+            #size_hint_y: 0.3
+            size_hint_x: 0.5
+            pos_hint: {"center_x": 0.5}
+            id: time_value
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            size_y: 40
+            spacing: 10
+            Button:
+                text: "ok"
+                on_press: root.on_press_ok()
+            Button:
+                text: "cancel"
+                on_press: root.on_press_cancel()
+
