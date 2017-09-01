@@ -97,6 +97,7 @@ class SetTimerWidget(Popup):
 class ResultTableScreen(Screen):
     pass
 
+
 class TrainingtimerScreen(Screen):
     counter = NumericProperty()
 
