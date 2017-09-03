@@ -2,68 +2,84 @@ import csv
 import os
 
 
-def save_data(dict_list):
-    """
-    saves the given data to the data file
-    :param dict_list:
-    :return:
-    """
-    file_name = get_file_name()
-    fieldnames = list(dict_list[0].keys())
-    with open(file_name, 'w') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for item in dict_list:
-            writer.writerow(item)
-    return file_name
+class PlankData(object):
+    def __init__(self, file_name="data_file.csv"):
+        self.file_name = self.__determine_file_name(file_name)
+        self.data = self.load()
 
+    def clean_data(self):
+        if os.path.exists(self.file_name):
+            os.remove(self.file_name)
+            self.data = list()
 
-def get_file_name(file_name="data_file.csv"):
-    """
-    create the full path to the result file. the file will be next to the script files. The file name itself can be
-    changed by an optional argument file_name
-    :return:
-    """
-    this_path = os.path.split(os.path.realpath(__file__))[0]
-    file_path = os.path.join(this_path, file_name)
-    return file_path
+    def save(self):
+        """
+        saves the given data to the data file
+        :param dict_list:
+        :return:
+        """
+        fieldnames = list(self.data[0].keys())
+        with open(self.file_name, 'w') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for item in self.data:
+                writer.writerow(item)
+        return self.file_name
 
+    @staticmethod
+    def __determine_file_name(file_name):
+        """
+        create the full path to the result file. the file will be next to the script files. The file name itself can be
+        changed by an optional argument file_name
+        :return:
+        """
+        this_path = os.path.split(os.path.realpath(__file__))[0]
+        file_path = os.path.join(this_path, file_name)
+        return file_path
 
-def read_data():
-    file_name = get_file_name()
+    def load(self):
+        data = list()
 
-    data = list()
-    with open(file_name) as csv_file:
-        reader = csv.DictReader(csv_file)
-        for row in reader:
-            data.append(row)
-    return data
+        try:
+            open(self.file_name, "r")
+        except FileNotFoundError:
+            return data
 
+        with open(self.file_name) as csv_file:
+            reader = csv.DictReader(csv_file)
+            for row in reader:
+                data.append(row)
+        return data
 
-def add_data(data_item):
-    current_data = read_data()
-    if not data_exists(current_data, data_item):
-        current_data.append(data_item)
-    else:
-        raise AssertionError("Data already Exists!")
-    save_data(current_data)
+    def add(self, data_item):
 
+        if not self.exists(data_item):
+            self.data.append(data_item)
+        else:
+            print(self.data)
+            raise AssertionError("Data already Exists!")
 
-def get_matching_data(data_list, data):
-    return [data_item for data_item in data_list if data_item == data]
+        self.save()
 
+    def remove(self, item_to_remove):
+        self.data = [data_item for data_item in self.data if data_item != item_to_remove]
+        self.save()
 
-def count_data(data_list, data):
-    return len(get_matching_data(data_list, data))
+    def get_matching_data(self, data_item):
+        matching_data = [item for item in self.data if item == data_item]
+        return matching_data
 
+    def count(self, data_item):
+        return len(self.get_matching_data(data_item))
 
-def data_exists(data_list, data):
-    return count_data(data_list, data) > 0
+    def size(self):
+        return len(self.data)
 
+    def exists(self, data_item):
+        if self.count(data_item) > 0:
+            return True
+        else:
+            return False
 
-def remove(item_to_remove):
-    data = read_data()
-    data = [data_item for data_item in data if data_item != item_to_remove]
-    # data.remove(item_to_remove)
-    save_data(data)
-    print(data)
+    def remove(self, item_to_remove):
+        self.data = [data_item for data_item in self.data if data_item != item_to_remove]
