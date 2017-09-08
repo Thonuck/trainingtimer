@@ -18,7 +18,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 
 #Config.set("graphics", "width", "200")
 #Config.set("graphics", "height", "200")
-from src.training_data import save_data
+from src.training_data import PlankData
 
 
 class ResultItem(RecycleDataViewBehavior, BoxLayout):
@@ -53,6 +53,7 @@ class ResultItem(RecycleDataViewBehavior, BoxLayout):
         else:
             print("selection removed for {0}".format(rv.data[index]))
 
+
 class SelectableRecycleBoxLayout(FocusBehavior, LayoutSelectionBehavior,
                                  RecycleBoxLayout):
     """Needs to be implemented, so the items of the recycle view can
@@ -60,13 +61,29 @@ class SelectableRecycleBoxLayout(FocusBehavior, LayoutSelectionBehavior,
     pass
 
 
-
 class ResultTableScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.plank_data = None
+        # self.list_data.data = self.plank_data.data
+
+    def on_enter(self, **kwargs):
+        print("ResultTableScreen: on_enter")
+        self.plank_data = PlankData()
+        self.list_data.data = self.plank_data.data
+        super().on_enter(**kwargs)
+
+    def on_leave(self, **kwargs):
+        print("ResultTableScreen: on_leave")
+        self.plank_data = None
+        super().on_leave(**kwargs)
 
     def add_item(self):
-        self.list_data.data.append({"datum": "{}".format(datetime.datetime.now()),
-                                    "counter": "{}".format("5")})
-                                    #'selectable': True})
+        datum = datetime.datetime.now()
+        datum_string = datum.strftime("%d.%m.%Y %H:%M")
+        self.plank_data.add({"datum": "{}".format(datum_string),
+                             "counter": "{}".format("5")})
+        self.list_data.data = self.plank_data.data
 
     def print_items(self):
         print(self.list_data.data)
@@ -74,11 +91,14 @@ class ResultTableScreen(Screen):
 
     def del_item(self):
         selected_nodes = self.controller.selected_nodes
-        new_nodes = [x for i, x in enumerate(self.list_data.data) if i not in selected_nodes]
-        self.list_data.data = new_nodes
+        self.plank_data.remove_by_indices(self.controller.selected_nodes)
+        self.plank_data.save()
+
+        # new_nodes = [x for i, x in enumerate(self.list_data.data) if i not in selected_nodes]
+        self.list_data.data = self.plank_data.data
 
     def save_data(self):
-        save_data(self.list_data.data)
+        self.plank_data.save()
 
 
 class SetTimerWidget(Popup):
@@ -86,7 +106,6 @@ class SetTimerWidget(Popup):
     
     def on_press_ok(self, *args):
         self.dismiss()
-        
         return False
 
     def on_press_cancel(self, *args):
@@ -101,18 +120,36 @@ class ResultTableScreen(Screen):
 class TrainingtimerScreen(Screen):
     counter = NumericProperty()
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def on_enter(self, **kwargs):
+        print("TrainingtimerScreen: on_enter")
+        super().on_enter(**kwargs)
+
+    def on_leave(self, **kwargs):
+        print("TrainingtimerScreen: on_leave")
+        super().on_leave(**kwargs)
+
     def set_timer(self):
         popup = SetTimerWidget()
         popup.open()
     
     def on_start(self):
-        Clock.schedule_interval(self.increment_counter, 1)
+        Clock.schedule_interval(self.increment_counter, 0.1)
 
     def on_stop(self):
         Clock.unschedule(self.increment_counter)
+        datum = datetime.datetime.now()
+        datum_string = datum.strftime("%d.%m.%Y %H:%M")
+        new_item = dict(datum=datum_string, counter=self.timer_display.text)
+        plank_data = PlankData()
+        plank_data.add(new_item)
+        plank_data.save()
 
     def increment_counter(self, something):
         self.counter += 1
+
 
 class MyScreenManager(ScreenManager):
     pass

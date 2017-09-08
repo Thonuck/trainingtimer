@@ -14,17 +14,11 @@
         text: root.datum
         size_hint_y: None
         height: 30
-        text_size: self.size
-        valign: "center"
-        halign: "left"
 
     Label:
         text: root.counter
         size_hint_y: None
         height: 30
-        text_size: self.size
-        valign: "center"
-        halign: "left"
 
 <ResultTableScreen>:
     name: "ResultTable"
@@ -33,25 +27,16 @@
     BoxLayout:
         orientation: "vertical"
 
+
+
         BoxLayout:
             size_hint_y: None
             height: 30
 
-            Button:
-                text: "Add New Item"
-                on_release: root.add_item()
-
-            Button:
-                text: "Delete An Item"
-                on_release: root.del_item()
-
-            Button:
-                text: "Debug print items"
-                on_release: root.print_items()
-
-            Button:
-                text: "Save Data"
-                on_release: root.save_data()
+            Label:
+                text: "Datum"
+            Label:
+                text: "Plank Duration"
 
         RecycleView:
             id: list_data
@@ -70,15 +55,27 @@
                 multiselect: True
                 touch_multiselect: True
 
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+
+            Button:
+                text: "Delete"
+                on_release: root.del_item()
+
+            Button:
+                text: "Back"
+                on_release:  app.root.current = "TrainingTimer"
 
 <TrainingtimerScreen>:
     name: "TrainingTimer"
+    timer_display: timer_display
     BoxLayout:
         orientation: "vertical"
         Label:
             id: timer_display
             font_size: 50
-            text: "{:02d}:{:02d}".format(int(root.counter / 60), int(root.counter % 60))
+            text: "{:02d}:{:02d}.{}".format(int(root.counter / 600), int((root.counter/10) % 60), int(root.counter % 10))
 
         BoxLayout:
             size_hint_y: 0.2
@@ -96,6 +93,10 @@
                 text: "Results"
                 on_release:  app.root.current = "ResultTable"
 
+        Button:
+            size_hint_y: 0.4
+            text: "START"
+            font_size: 50
 <MyScreenManager>:
     TrainingtimerScreen:
     ResultTableScreen:

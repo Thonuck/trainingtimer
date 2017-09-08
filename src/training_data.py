@@ -83,3 +83,7 @@ class PlankData(object):
 
     def remove(self, item_to_remove):
         self.data = [data_item for data_item in self.data if data_item != item_to_remove]
+
+    def remove_by_indices(self, index_list):
+        new_nodes = [x for i, x in enumerate(self.data) if i not in index_list]
+        self.data = new_nodes
