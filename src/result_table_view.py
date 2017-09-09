@@ -43,8 +43,6 @@ class ResultItem(RecycleDataViewBehavior, BoxLayout):
             print("selection removed for {0}".format(rv.data[index]))
 
 
-
-
 class SelectableRecycleBoxLayout(FocusBehavior, LayoutSelectionBehavior,
                                  RecycleBoxLayout):
     """Needs to be implemented, so the items of the recycle view can
@@ -88,6 +86,8 @@ class ResultTableScreen(Screen):
 
         # new_nodes = [x for i, x in enumerate(self.list_data.data) if i not in selected_nodes]
         self.list_data.data = self.plank_data.data
+
+        self.controller.selected_nodes = []
 
     def save_data(self):
         self.plank_data.save()
