@@ -16,8 +16,8 @@ from kivy.uix.recycleview.views import RecycleDataViewBehavior
 
 from kivy.uix.screenmanager import ScreenManager, Screen
 
-#Config.set("graphics", "width", "200")
-#Config.set("graphics", "height", "200")
+# Config.set("graphics", "width", "200")
+# Config.set("graphics", "height", "200")
 from src.training_data import PlankData
 
 
@@ -54,6 +54,8 @@ class ResultItem(RecycleDataViewBehavior, BoxLayout):
             print("selection removed for {0}".format(rv.data[index]))
 
 
+
+
 class SelectableRecycleBoxLayout(FocusBehavior, LayoutSelectionBehavior,
                                  RecycleBoxLayout):
     """Needs to be implemented, so the items of the recycle view can
@@ -80,7 +82,8 @@ class ResultTableScreen(Screen):
 
     def add_item(self):
         datum = datetime.datetime.now()
-        datum_string = datum.strftime("%d.%m.%Y %H:%M")
+        # datum_string = datum.strftime("%d.%m.%Y %H:%M")
+        datum_string = datum.strftime("%d. %b %Y   %H:%M")
         self.plank_data.add({"datum": "{}".format(datum_string),
                              "counter": "{}".format("5")})
         self.list_data.data = self.plank_data.data
@@ -103,7 +106,7 @@ class ResultTableScreen(Screen):
 
 class SetTimerWidget(Popup):
     value = NumericProperty()
-    
+
     def on_press_ok(self, *args):
         self.dismiss()
         return False
@@ -122,6 +125,7 @@ class TrainingtimerScreen(Screen):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.running = False
 
     def on_enter(self, **kwargs):
         print("TrainingtimerScreen: on_enter")
@@ -134,18 +138,29 @@ class TrainingtimerScreen(Screen):
     def set_timer(self):
         popup = SetTimerWidget()
         popup.open()
-    
+
     def on_start(self):
+        self.counter = 0
         Clock.schedule_interval(self.increment_counter, 0.1)
+        self.running = True
+        self.start_stop_button.text = "STOP"
 
     def on_stop(self):
         Clock.unschedule(self.increment_counter)
+        self.running = False
+        self.start_stop_button.text = "START"
         datum = datetime.datetime.now()
-        datum_string = datum.strftime("%d.%m.%Y %H:%M")
+        datum_string = datum.strftime("%d. %b %Y   %H:%M")
         new_item = dict(datum=datum_string, counter=self.timer_display.text)
         plank_data = PlankData()
         plank_data.add(new_item)
         plank_data.save()
+
+    def on_start_stop(self):
+        if self.running:
+            self.on_stop()
+        else:
+            self.on_start()
 
     def increment_counter(self, something):
         self.counter += 1

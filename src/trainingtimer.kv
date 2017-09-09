@@ -27,8 +27,6 @@
     BoxLayout:
         orientation: "vertical"
 
-
-
         BoxLayout:
             size_hint_y: None
             height: 30
@@ -70,33 +68,29 @@
 <TrainingtimerScreen>:
     name: "TrainingTimer"
     timer_display: timer_display
+    start_stop_button: start_stop_button
     BoxLayout:
         orientation: "vertical"
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            spacing: 10
+            Button:
+                text: "Show Results"
+                on_release:  app.root.current = "ResultTable"
+
         Label:
             id: timer_display
             font_size: 50
             text: "{:02d}:{:02d}.{}".format(int(root.counter / 600), int((root.counter/10) % 60), int(root.counter % 10))
 
-        BoxLayout:
-            size_hint_y: 0.2
-            spacing: 10
-            Button:
-                text: "Start"
-                on_release: root.on_start()
-            Button:
-                text: "Stop"
-                on_release: root.on_stop()
-            Button:
-                text: "Set"
-                on_release: root.counter = 0
-            Button:
-                text: "Results"
-                on_release:  app.root.current = "ResultTable"
-
         Button:
             size_hint_y: 0.4
+            id: start_stop_button
             text: "START"
             font_size: 50
+            on_release: root.on_start_stop()
 <MyScreenManager>:
     TrainingtimerScreen:
     ResultTableScreen:
