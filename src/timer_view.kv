@@ -1,0 +1,55 @@
+#:import TrainingtimerScreen timer_view
+
+<TrainingtimerScreen>:
+    name: "TrainingTimer"
+    timer_display: timer_display
+    start_stop_button: start_stop_button
+    BoxLayout:
+        orientation: "vertical"
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            spacing: 10
+            Button:
+                text: "Show Results"
+                on_release:  app.root.current = "ResultTable"
+
+        Label:
+            id: timer_display
+            font_size: 50
+            text: "{:02d}:{:02d}.{}".format(int(root.counter / 600), int((root.counter/10) % 60), int(root.counter % 10))
+
+        Button:
+            size_hint_y: 0.4
+            id: start_stop_button
+            text: "START"
+            font_size: 50
+            on_release: root.on_start_stop()
+
+
+<SetTimerWidget>:
+    title: "Set the time"
+    size_hint: 0.8, 0.8
+    id: settimer
+
+    BoxLayout
+        orientation: "vertical"
+        spacing: 20
+        TextInput:
+            #size_hint_y: 0.3
+            size_hint_x: 0.5
+            pos_hint: {"center_x": 0.5}
+            id: time_value
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            size_y: 40
+            spacing: 10
+            Button:
+                text: "ok"
+                on_press: root.on_press_ok()
+            Button:
+                text: "cancel"
+                on_press: root.on_press_cancel()
+

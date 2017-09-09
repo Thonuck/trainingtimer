@@ -1,0 +1,68 @@
+#:import ResultTableScreen result_table_view
+
+<ResultItem>:
+    orientation: "horizontal"
+    datum: ""
+    counter: ""
+
+    canvas.before:
+        Color:
+            rgba: (.0, 0.9, .1, .3) if self.selected else (0, 0, 0, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Label:
+        text: root.datum
+        size_hint_y: None
+        height: 30
+
+    Label:
+        text: root.counter
+        size_hint_y: None
+        height: 30
+
+<ResultTableScreen>:
+    name: "ResultTable"
+    controller: controller
+    list_data: list_data
+    BoxLayout:
+        orientation: "vertical"
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+
+            Label:
+                text: "Datum"
+            Label:
+                text: "Plank Duration"
+
+        RecycleView:
+            id: list_data
+            viewclass: "ResultItem"
+
+            SelectableRecycleBoxLayout:
+                id: controller
+
+                # key in data to indicate, whether item is selectable or not
+                #key_selection: 'selectable'
+                default_size: None, dp(30)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: 'vertical'
+                multiselect: True
+                touch_multiselect: True
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+
+            Button:
+                text: "Delete"
+                on_release: root.del_item()
+
+            Button:
+                text: "Back"
+                on_release:  app.root.current = "TrainingTimer"
