@@ -3,7 +3,7 @@ from kivy.properties import NumericProperty, Clock
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 
-from src.training_data import PlankData
+from training_data import PlankData
 
 
 class SetTimerWidget(Popup):
